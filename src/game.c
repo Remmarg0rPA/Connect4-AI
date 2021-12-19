@@ -106,10 +106,10 @@ char get_winner(Board *board){
     }
 
     // Check each column
-    for (int col = 0; col < board->height; col++){
+    for (int col = 0; col < board->width; col++){
         uint p1_count = 0;
         uint p2_count = 0;
-        for (int row = 0; row < board->width; row++){
+        for (int row = 0; row < board->height; row++){
             // increment player counters
             char p = get_board_elem(board, row, col);
             if (p == 'X'){

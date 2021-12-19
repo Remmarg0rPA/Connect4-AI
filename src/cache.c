@@ -25,7 +25,7 @@ int get_cache(Board *board){
     return ret;
 }
 
-void store_cache(Board *board, uint16_t value){
+void store_cache(Board *board, int value){
     uint16_t h = hash(board, CACHE_SIZE);
     if (cache.cache[h].string != NULL){
         free(cache.cache[h].string);

@@ -9,7 +9,7 @@
 
 typedef struct HashEntry {
     char *string;
-    uint16_t value;
+    int value;
 } HashEntry;
 
 typedef struct Cache {
@@ -22,7 +22,7 @@ Cache cache;
 
 void init_cache(void);
 int get_cache(Board *board);
-void store_cache(Board *board, uint16_t value);
+void store_cache(Board *board, int value);
 void delete_cache_entry(Board *board);
 
 char *board_to_string(Board *board);
