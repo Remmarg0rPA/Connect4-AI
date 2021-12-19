@@ -10,11 +10,12 @@ void init_cache(void){
     }
     cache.size = CACHE_SIZE;
     cache.used = 0;
+    cache.collisions = 0;
     return;
 }
 
 int get_cache(Board *board){
-    uint16_t h = hash(board, CACHE_SIZE);
+    uint h = hash(board, CACHE_SIZE);
     HashEntry he = cache.cache[h];
     if (he.string == NULL){
         return -1;
@@ -26,9 +27,10 @@ int get_cache(Board *board){
 }
 
 void store_cache(Board *board, int value){
-    uint16_t h = hash(board, CACHE_SIZE);
+    uint h = hash(board, CACHE_SIZE);
     if (cache.cache[h].string != NULL){
         free(cache.cache[h].string);
+        cache.collisions++;
     } else {
         cache.used++;
     }
@@ -37,7 +39,7 @@ void store_cache(Board *board, int value){
 }
 
 void delete_cache_entry(Board *board){
-    uint16_t h = hash(board, CACHE_SIZE);
+    uint h = hash(board, CACHE_SIZE);
     if (cache.cache[h].string != NULL){
         free(cache.cache[h].string);
         cache.used--;
@@ -61,12 +63,12 @@ char *board_to_string(Board *board){
     return str;
 }
 
-uint16_t hash(Board *board, uint size){
-    uint16_t h = 0;
+uint hash(Board *board, uint size){
+    uint h = 0;
     char *s = board_to_string(board);
     for (int i = 0; i < board->width*board->height; i++){
         h += s[i];
-        h = (h<<1) + ((h & 0xc)>>8);
+        h = (h<<1) + ((h & 0xc)>>7) + (h >> 16);
     }
     free(s);
     return (h % size);

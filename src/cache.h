@@ -4,7 +4,7 @@
 #include "game.h"
 
 #ifndef CACHE_SIZE
-#define CACHE_SIZE 5000
+#define CACHE_SIZE 100000
 #endif
 
 typedef struct HashEntry {
@@ -16,6 +16,7 @@ typedef struct Cache {
     HashEntry cache[CACHE_SIZE];
     uint size;
     uint used;
+    uint collisions;
 } Cache;
 
 Cache cache;
@@ -26,6 +27,6 @@ void store_cache(Board *board, int value);
 void delete_cache_entry(Board *board);
 
 char *board_to_string(Board *board);
-uint16_t hash(Board *board, uint size);
+uint hash(Board *board, uint size);
 
 #endif
