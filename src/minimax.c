@@ -61,26 +61,19 @@ int minimax_score(Board* board, char player, int alpha, int beta, bool isMaxPlay
 }
 
 int minimax_ai(Board* board, char player, uint maxDepth){
-    int *scores = malloc(board->width * sizeof(int));
+    int score;
+    int best_mv = -1;
     for (int mv = 0; mv < board->width; mv++){
         if (is_valid_move(board, mv)){
             make_move(board, mv, player);
-            scores[mv] = minimax_score(board, (player == 'X' ? 'O' : 'X'), -100, 100, false, maxDepth);
+            score = minimax_score(board, (player == 'X' ? 'O' : 'X'), -100, 100, false, maxDepth);
             undo_move(board, mv);
-        } else {
-            scores[mv] = -10;
+            if (score == 10){
+                return mv;
+            } else if (score == 0 || best_mv == -1) {
+                best_mv = mv;
+            }
         }
     }
-
-    int best_mv = 0;
-    for (int mv = 0; mv < board->width; mv++){
-        if (scores[mv] == 10){
-            best_mv = mv;
-            break;
-        } else if (scores[mv] == 0){
-            best_mv = mv;
-        }
-    }
-    free(scores);
     return best_mv;
 }
