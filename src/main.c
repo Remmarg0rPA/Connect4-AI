@@ -7,7 +7,7 @@
 #include "cache.h"
 
 #ifndef MINIMAX_DEPTH
-#define MINIMAX_DEPTH 7
+#define MINIMAX_DEPTH 11
 #endif
 
 int main(int argc, char** argv){
