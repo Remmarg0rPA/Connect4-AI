@@ -4,17 +4,27 @@
 #include "minimax.h"
 #include "game.h"
 #include "utils.h"
+#include "cache.h"
 
 int minimax_score(Board* board, char player, bool isMaxPlayer, uint maxDepth){
+    int value = get_cache(board);
+    if (value != -1){
+        return value;
+    }
+    
     char c = get_winner(board);
     if (c){
+        int ret = 0;
         if (c == player){
-            return isMaxPlayer ? 10 : -10;
+            ret = isMaxPlayer ? 10 : -10;
         } else {
-            return isMaxPlayer ? -10 : 10;
+            ret = isMaxPlayer ? -10 : 10;
         }
+        store_cache(board, ret);
+        return ret;
     }
     else if (is_draw(board)){
+        store_cache(board, 0);
         return 0;
     } 
     else if (maxDepth <= 0){
@@ -31,28 +41,29 @@ int minimax_score(Board* board, char player, bool isMaxPlayer, uint maxDepth){
         undo_move(board, mv);
     }
 
-    int best_mv = 0;
+    int best_score = 0;
     if (isMaxPlayer){
         for (int i = 0; i < board->width; i++){
             if (scores[i] == 10){
-                best_mv = i;
+                best_score = 10;
                 break;
             } else if (scores[i] == 0){
-                best_mv = i;
+                best_score = 0;
             }
         }
     } else {
         for (int i = 0; i < board->width; i++){
             if (scores[i] == -10){
-                best_mv = i;
+                best_score = -10;
                 break;
             } else if (scores[i] == 0){
-                best_mv = i;
+                best_score = 0;
             }
         } 
     }
     free(scores);
-    return best_mv;
+    store_cache(board, best_score);
+    return best_score;
 }
 
 int minimax_ai(Board* board, char player, uint maxDepth){

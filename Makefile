@@ -3,7 +3,7 @@ CFLAGS = -Wall
 MAIN = main
 TEST = test
 SRC=src
-OBJS = $(addprefix $(SRC)/, game.o minimax.o utils.o)
+OBJS = $(addprefix $(SRC)/, game.o minimax.o utils.o cache.o)
 
 $(MAIN): $(OBJS) $(SRC)/$(MAIN).o
 	$(CC) $^ -o $@ $(CFLAGS) $(EXTRA_FLAGS)

@@ -4,8 +4,15 @@
 
 #include "game.h"
 #include "minimax.h"
+#include "cache.h"
+
+#ifndef MINIMAX_DEPTH
+#define MINIMAX_DEPTH 7
+#endif
 
 int main(int argc, char** argv){
+    init_cache();
+
     char p1 = 'X';
     char p2 = 'O';
     Board *board = new_board(7,6);
@@ -28,7 +35,7 @@ int main(int argc, char** argv){
         if (turn == p1){
             printf("Waiting for the computer to make a move...");
             fflush(stdout);
-            mv = minimax_ai(board, p1, 5);
+            mv = minimax_ai(board, p1, MINIMAX_DEPTH);
             printf("\r\x1B[0K\n");
         } else {
             mv = get_move();
@@ -52,6 +59,6 @@ int main(int argc, char** argv){
 
         turn = turn == p1 ? p2 : p1;
     }
-
+    delete_board(board);
     return 0;
 }
