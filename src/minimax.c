@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "cache.h"
 
-int minimax_score(Board* board, char player, bool isMaxPlayer, uint maxDepth){
+int minimax_score(Board* board, char player, int alpha, int beta, bool isMaxPlayer, uint maxDepth){
     int value = get_cache(board);
     if (value != -1){
         return value;
@@ -31,39 +31,33 @@ int minimax_score(Board* board, char player, bool isMaxPlayer, uint maxDepth){
         return 0;
     }
     
-    int *scores = calloc(board->width, sizeof(int));
-    for (int mv = 0; mv < board->width; mv++){
+    int score;
+    int mv = 0;
+    while (mv < board->width){
         if (get_board_elem(board, 0, mv) != 0){
+            mv++;
             continue;
         }
         make_move(board, mv, player);
-        scores[mv] = minimax_score(board, (player == 'X' ? 'O' : 'X'), !isMaxPlayer, maxDepth-1);
+        score = minimax_score(board, (player == 'X' ? 'O' : 'X'), alpha, beta, !isMaxPlayer, maxDepth-1);
         undo_move(board, mv);
-    }
 
-    int best_score = 0;
-    if (isMaxPlayer){
-        for (int i = 0; i < board->width; i++){
-            if (scores[i] == 10){
-                best_score = 10;
+        if (isMaxPlayer){
+            alpha = alpha < score ? score : alpha;
+            if (beta <= alpha){
                 break;
-            } else if (scores[i] == 0){
-                best_score = 0;
             }
         }
-    } else {
-        for (int i = 0; i < board->width; i++){
-            if (scores[i] == -10){
-                best_score = -10;
+        else {
+            beta = beta > score ? score : beta;
+            if (beta <= alpha){
                 break;
-            } else if (scores[i] == 0){
-                best_score = 0;
             }
-        } 
+        }
+        mv++;
     }
-    free(scores);
-    store_cache(board, best_score);
-    return best_score;
+    store_cache(board, score);
+    return score;
 }
 
 int minimax_ai(Board* board, char player, uint maxDepth){
@@ -71,7 +65,7 @@ int minimax_ai(Board* board, char player, uint maxDepth){
     for (int mv = 0; mv < board->width; mv++){
         if (is_valid_move(board, mv)){
             make_move(board, mv, player);
-            scores[mv] = minimax_score(board, (player == 'X' ? 'O' : 'X'), false, maxDepth);
+            scores[mv] = minimax_score(board, (player == 'X' ? 'O' : 'X'), -100, 100, false, maxDepth);
             undo_move(board, mv);
         } else {
             scores[mv] = -10;
